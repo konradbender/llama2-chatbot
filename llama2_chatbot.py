@@ -22,7 +22,8 @@ from utils import find_top_k_houses
 
 # feel free to replace with your own logo
 logo1 = 'https://storage.googleapis.com/llama2_release/a16z_logo.png'
-logo2 = 'https://storage.googleapis.com/llama2_release/replicate_logo_white.png'
+# TODO this resolution is way to high
+logo2 = 'https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg'
 
 ###Initial UI configuration:###
 st.set_page_config(page_title="LLaMA2 Chatbot by a16z-infra", page_icon=logo1, layout="wide")
@@ -96,11 +97,11 @@ if clear_chat_history_button:
     
 # add links to relevant resources for users to select
 text1 = 'Chatbot Demo Code' 
-text2 = 'Model on Replicate' 
+text2 = 'Model from OpenaI' 
 text3 = 'LLaMa2 Cog Template'
 
 logo1_link = "https://github.com/a16z-infra/llama2-chatbot"
-logo2_link = "https://replicate.com/a16z-infra/llama13b-v2-chat"
+logo2_link = "https://platform.openai.com/overview"
 text3_link = "https://github.com/a16z-infra/cog-llama-template"
 
 st.sidebar.markdown(f"""
@@ -148,13 +149,6 @@ if prompt := st.chat_input(f"Type the description of your dream house in {st.ses
     
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
-        full_response = ""
-        string_dialogue = ""
-        for dict_message in st.session_state.chat_dialogue:
-            if dict_message["role"] == "user":
-                string_dialogue = string_dialogue + "User: " + dict_message["content"] + "\n\n"
-            else:
-                string_dialogue = string_dialogue + "Assistant: " + dict_message["content"] + "\n\n"
         print (prompt)
         output = find_top_k_houses(
             OPENAPI_KEY,
@@ -166,8 +160,8 @@ if prompt := st.chat_input(f"Type the description of your dream house in {st.ses
             city=st.session_state['city'],
             top_k=st.session_state['n_results'],
         )
-
-        full_response = output
+        full_response = f"Here are the top {st.session_state['n_results']} houses in {st.session_state['city']} that match your description:\n\n"
+        full_response += "".join(output)
         message_placeholder.markdown(full_response + "▌")
         message_placeholder.markdown(full_response)
     # Add assistant response to chat history
